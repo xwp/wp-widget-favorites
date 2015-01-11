@@ -1,14 +1,14 @@
 <?php
 /**
- * Plugin Name: Favorite Widget Instances
- * Plugin URI: https://github.com/xwp/wp-favorite-widget-instances
- * Description: ...
+ * Plugin Name: Widget Favorites
+ * Plugin URI: https://github.com/xwp/wp-widget-favorites
+ * Description: Store revisions of widget instances for re-use.
  * Version: 0.1
  * Author:  XWP
  * Author URI: https://xwp.co/
  * License: GPLv2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain: favorite-widget-instances
+ * Text Domain: widget-favorites
  * Domain Path: /languages
  *
  * Copyright (c) 2014 XWP (https://xwp.co/)
@@ -30,15 +30,15 @@
 
 if ( version_compare( phpversion(), '5.3', '>=' ) ) {
 	require __DIR__ . '/php/class-plugin.php';
-	$class_name = '\FavoriteWidgetInstances\Plugin';
-	$GLOBALS['favorite_widget_instances_plugin'] = new $class_name();
+	$class_name = '\WidgetFavorites\Plugin';
+	$GLOBALS['widget_favorites_plugin'] = new $class_name();
 } else {
-	function favorite_widget_instances_php_version_error() {
-		printf( '<div class="error"><p>%s</p></div>', esc_html__( 'Favorite Widget Instances plugin error: Your version of PHP is too old to run this plugin. You must be running PHP 5.3 or higher.', 'favorite-widget-instances' ) );
+	function widget_favorites_php_version_error() {
+		printf( '<div class="error"><p>%s</p></div>', esc_html__( 'Widget Favorites plugin error: Your version of PHP is too old to run this plugin. You must be running PHP 5.3 or higher.', 'widget-favorites' ) );
 	}
 	if ( defined( 'WP_CLI' ) ) {
-		WP_CLI::warning( __( 'Favorite Widget Instances plugin error: Your PHP version is too old. You must have 5.3 or higher.', 'favorite-widget-instances' ) );
+		WP_CLI::warning( __( 'Widget Favorites plugin error: Your PHP version is too old. You must have 5.3 or higher.', 'widget-favorites' ) );
 	} else {
-		add_action( 'admin_notices', 'favorite_widget_instances_php_version_error' );
+		add_action( 'admin_notices', 'widget_favorites_php_version_error' );
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace FavoriteWidgetInstances;
+namespace WidgetFavorites;
 
 class SampleTest extends \WP_UnitTestCase {
 
