@@ -30,7 +30,7 @@ Note that this only adds functionality to widgets managed in the Customizer.
 ## Other Related Plugins ##
 
 * [Settings Revisions](https://wordpress.org/plugins/settings-revisions/)
- * [Oomph Clone Widgets](https://wordpress.org/plugins/oomph-clone-widgets/)
- * [Widget Alias](https://wordpress.org/plugins/widget-alias/)
- * [Duplicate Widget](https://wordpress.org/plugins/duplicate-widget/) (not updated in 2+ years)
+* [Oomph Clone Widgets](https://wordpress.org/plugins/oomph-clone-widgets/)
+* [Widget Alias](https://wordpress.org/plugins/widget-alias/)
+* [Duplicate Widget](https://wordpress.org/plugins/duplicate-widget/) (not updated in 2+ years)
 
