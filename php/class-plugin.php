@@ -262,7 +262,7 @@ class Plugin {
 	 *
 	 */
 	public function boot_scripts() {
-		if ( $this->booted ) {
+		if ( $this->booted || ! did_action( 'customize_register' ) ) {
 			return;
 		}
 		$this->booted = true;

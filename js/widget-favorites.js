@@ -382,6 +382,10 @@ var widgetFavorites = (function ( $ ) {
 		if ( this.initialized ) {
 			return;
 		}
+		if ( typeof wp === 'undefined' || typeof wp.customize === 'undefined' || typeof wp.customize.Widgets === 'undefined' ) {
+			throw new Error( 'Favorite Widgets is only supported in the Customizer' );
+		}
+
 		this.initialized = true;
 
 		$( document ).on( 'widget-added', this.onWidgetAdded );
