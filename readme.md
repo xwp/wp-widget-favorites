@@ -21,9 +21,11 @@ This is what the Widget Favorites plugin does. It provides a way to save widget 
 widget instance and to give it a particular name to identify it later when loading
 the favorited widget instance into another widget.
 
+Another way to look at this plugin is that it provides (non-automatic) revisions for widgets.
+
 Note that this only adds functionality to widgets managed in the Customizer.
 
-Store revisions of widget instances for re-use.
+**Development of this plugin is done [on GitHub](https://github.com/xwp/wp-widget-favorites). Pull requests welcome. Please see [issues](https://github.com/xwp/wp-widget-favorites/issues) reported there<!-- before going to the [plugin forum](https://wordpress.org/support/plugin/widget-favorites)-->.**
 
 ## Other Related Plugins ##
 
