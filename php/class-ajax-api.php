@@ -295,7 +295,7 @@ class Ajax_API {
 			'post_name' => $params['src_widget_id'],
 			'post_type' => Plugin::POST_TYPE,
 			'post_status' => 'publish',
-			'post_title' => $params['name'],
+			'post_title' => isset( $params['name'] ) ? $params['name'] : null,
 			'post_content' => serialize( $params['sanitized_widget_setting'] ), // @todo unfiltered_html problem?
 		);
 

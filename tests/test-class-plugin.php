@@ -103,6 +103,7 @@ class ClassPluginTest extends \WP_UnitTestCase {
 		$wp_customize = $this->plugin->get_customize_manager();
 		$result = $this->plugin->ajax_api->create( array(
 			'src_widget_id' => 'calendar-1',
+			'name' => 'Awesome',
 			'sanitized_widget_setting' => $wp_customize->widgets->sanitize_widget_js_instance( array( 'title' => 'Hello World' ) ),
 		) );
 
