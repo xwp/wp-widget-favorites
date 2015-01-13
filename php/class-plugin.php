@@ -10,7 +10,7 @@ class Plugin {
 	/**
 	 * @const string
 	 */
-	const POST_TYPE = 'favorite_widget';
+	const POST_TYPE = 'widget_favorite';
 
 	/**
 	 * @var array
@@ -93,8 +93,8 @@ class Plugin {
 	public function register_post_type() {
 		register_post_type( self::POST_TYPE, array(
 			'labels' => array(
-				'name' => __( 'Favorite Widgets', 'widget-favorites' ),
-				'singular_name' => __( 'Favorite Widget', 'widget-favorites' ),
+				'name' => __( 'Widgets Favorites', 'widget-favorites' ),
+				'singular_name' => __( 'Widget Favorite', 'widget-favorites' ),
 			),
 			'public' => false,
 			'capability_type' => self::POST_TYPE,
