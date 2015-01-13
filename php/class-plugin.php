@@ -69,11 +69,7 @@ class Plugin {
 		$this->config = apply_filters( 'widget_favorites_plugin_config', $this->config, $this );
 		$this->register_post_type();
 
-		if ( current_user_can( $this->config['capability'] ) ) {
-			add_action( 'sidebar_admin_setup', array( $this, 'enqueue_scripts' ) );
-			add_action( 'admin_footer', array( $this, 'boot_scripts' ), 100 );
-			add_action( 'customize_controls_print_footer_scripts', array( $this, 'boot_scripts' ), 100 );
-		}
+		add_action( 'sidebar_admin_setup', array( $this, 'enqueue_scripts' ) );
 
 		$this->ajax_api = new Ajax_API( $this );
 		// @todo Class for managing scripts
@@ -85,7 +81,7 @@ class Plugin {
 	 */
 	public function get_customize_manager() {
 		if ( empty( $GLOBALS['wp_customize'] ) ) {
-			require( ABSPATH . WPINC . '/class-wp-customize-manager.php' );
+			require_once( ABSPATH . WPINC . '/class-wp-customize-manager.php' );
 			$GLOBALS['wp_customize'] = new \WP_Customize_Manager(); // wpcs: global override ok
 		}
 		return $GLOBALS['wp_customize'];
@@ -126,6 +122,10 @@ class Plugin {
 	 * @action sidebar_admin_setup
 	 */
 	public function enqueue_scripts() {
+		if ( ! current_user_can( $this->config['capability'] ) ) {
+			return;
+		}
+
 		$handle = 'widget-favorites';
 		$src = $this->dir_url . 'js/widget-favorites.js';
 		$deps = array( 'jquery', 'backbone', 'customize-controls', 'wp-util' );
@@ -141,6 +141,8 @@ class Plugin {
 			'data',
 			sprintf( 'var _widgetFavorites_exports = %s;', wp_json_encode( $this->get_script_exports() ) )
 		);
+
+		add_action( 'customize_controls_print_footer_scripts', array( $this, 'boot_scripts' ), 100 );
 	}
 
 	/**
@@ -167,14 +169,14 @@ class Plugin {
 	/**
 	 * @var bool
 	 */
-	protected $printed_templates = false;
+	public $printed_templates = false;
 
 	/**
-	 *
+	 * @return bool
 	 */
 	public function print_templates() {
 		if ( $this->printed_templates ) {
-			return;
+			return false;
 		}
 		$this->printed_templates = true;
 
@@ -251,25 +253,27 @@ class Plugin {
 			</div>
 		</script>
 		<?php
+		return true;
 	}
 
 	/**
 	 * @var bool
 	 */
-	protected $booted = false;
+	public $booted_scripts = false;
 
 	/**
-	 *
+	 * @return bool
 	 */
 	public function boot_scripts() {
-		if ( $this->booted || ! did_action( 'customize_register' ) ) {
-			return;
+		if ( $this->booted_scripts || ! did_action( 'customize_register' ) ) {
+			return false;
 		}
-		$this->booted = true;
+		$this->booted_scripts = true;
 
 		wp_print_scripts( array( 'widget-favorites' ) );
 		$this->print_templates();
-		print '<script> widgetFavorites.init(); </script>';
+		echo '<script> widgetFavorites.init(); </script>';
+		return true;
 	}
 
 	/**
