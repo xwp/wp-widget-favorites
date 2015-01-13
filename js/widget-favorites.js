@@ -77,7 +77,6 @@ var widgetFavorites = (function ( $ ) {
 		 * @returns {*}
 		 */
 		validate: function ( attributes ) {
-			var sanitized_widget_setting;
 			if ( ! attributes.src_widget_id ) {
 				return new Error( 'missing src_widget_id' );
 			}
