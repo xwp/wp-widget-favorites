@@ -30,3 +30,8 @@ Note that this only adds functionality to widgets managed in the Customizer.
 * [Oomph Clone Widgets](https://wordpress.org/plugins/oomph-clone-widgets/)
 * [Widget Alias](https://wordpress.org/plugins/widget-alias/)
 * [Duplicate Widget](https://wordpress.org/plugins/duplicate-widget/) (not updated in 2+ years)
+
+== Changelog ==
+
+= 0.1 =
+Initial release
