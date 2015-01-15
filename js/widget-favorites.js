@@ -479,6 +479,16 @@ var widgetFavorites = (function ( $ ) {
 		data.action = self.ajaxAction;
 		data.method = method;
 
+		/*
+		 * Sending wp_customize=on is needed the Customizer will be loaded early
+		 * enough so that the non-pluggable functions defined in
+		 * class-wp-customize-manager.php can be defined before the theme or plugins
+		 * load and try to define it themselves.
+		 *
+		 * See https://github.com/xwp/wp-widget-favorites/issues/5
+		 */
+		data.wp_customize = 'on';
+
 		if ( 'create' === method || 'update' === method ) {
 			$.extend( data, model.toJSON() );
 			data.sanitized_widget_setting = JSON.stringify( data.sanitized_widget_setting );
