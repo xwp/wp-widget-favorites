@@ -22,7 +22,7 @@ Another way to look at this plugin is that it provides (non-automatic) revisions
 
 Note that this only adds functionality to widgets managed in the Customizer.
 
-**Development of this plugin is done [on GitHub](https://github.com/xwp/wp-widget-favorites). Pull requests welcome. Please see [issues](https://github.com/xwp/wp-widget-favorites/issues) reported there<!-- before going to the [plugin forum](https://wordpress.org/support/plugin/widget-favorites)-->.**
+**Development of this plugin is done [on GitHub](https://github.com/xwp/wp-widget-favorites). Pull requests welcome. Please see [issues](https://github.com/xwp/wp-widget-favorites/issues) reported there before going to the [plugin forum](https://wordpress.org/support/plugin/widget-favorites).**
 
 == Other Related Plugins ==
 
