@@ -32,3 +32,6 @@ Note that this only adds functionality to widgets managed in the Customizer.
 
 = 0.1 =
 Initial release
+
+= 0.1.1 =
+Fix conflict with Make theme. [#5](https://github.com/xwp/wp-widget-favorites/issues/5)
