@@ -3,8 +3,8 @@
 
 Store revisions of widget instances for re-use.
 
-**Contributors:** [xwp](http://profiles.wordpress.org/xwp), [westonruter](http://profiles.wordpress.org/westonruter)  
-**Tags:** [widgets](http://wordpress.org/plugins/tags/widgets), [customizer](http://wordpress.org/plugins/tags/customizer), [revisions](http://wordpress.org/plugins/tags/revisions)  
+**Contributors:** [xwp](https://profiles.wordpress.org/xwp), [westonruter](https://profiles.wordpress.org/westonruter)  
+**Tags:** [widgets](https://wordpress.org/plugins/tags/widgets), [customizer](https://wordpress.org/plugins/tags/customizer), [revisions](https://wordpress.org/plugins/tags/revisions)  
 **Requires at least:** 4.1  
 **Tested up to:** 4.1  
 **Stable tag:** trunk (master)  
@@ -25,7 +25,7 @@ Another way to look at this plugin is that it provides (non-automatic) revisions
 
 Note that this only adds functionality to widgets managed in the Customizer.
 
-**Development of this plugin is done [on GitHub](https://github.com/xwp/wp-widget-favorites). Pull requests welcome. Please see [issues](https://github.com/xwp/wp-widget-favorites/issues) reported there<!-- before going to the [plugin forum](https://wordpress.org/support/plugin/widget-favorites)-->.**
+**Development of this plugin is done [on GitHub](https://github.com/xwp/wp-widget-favorites). Pull requests welcome. Please see [issues](https://github.com/xwp/wp-widget-favorites/issues) reported there before going to the [plugin forum](https://wordpress.org/support/plugin/widget-favorites).**
 
 ## Other Related Plugins ##
 
