@@ -403,7 +403,7 @@ var widgetFavorites = (function ( $ ) {
 				return self.sync( method, model, options );
 			} else {
 				// Pass-through for any other implementations on the page
-				return originalBackboneSync.call( this, method, model, options );
+				return originalBackboneSync.call( Backbone, method, model, options );
 			}
 		};
 	};
