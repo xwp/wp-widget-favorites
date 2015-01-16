@@ -350,6 +350,9 @@ class Plugin {
 	public function locate_plugin() {
 		$reflection = new \ReflectionObject( $this );
 		$file_name = $reflection->getFileName();
+		if ( '/' !== \DIRECTORY_SEPARATOR ) {
+			$file_name = str_replace( \DIRECTORY_SEPARATOR, '/', $file_name ); // Windows compat
+		}
 		$plugin_dir = preg_replace( '#(.*plugins[^/]*/[^/]+)(/.*)?#', '$1', $file_name, 1, $count );
 		if ( 0 === $count ) {
 			throw new \Exception( "Class not located within a directory tree containing 'plugins': $file_name" );
