@@ -299,7 +299,15 @@ class Ajax_API {
 			'post_content' => base64_encode( serialize( $params['sanitized_widget_setting'] ) ), // using base64_encode to prevent de-serialization errors
 		);
 
+		// Prevent special characters from becoming HTML entities. The VIP Co-Schedule plugin removes this filter.
+		$filter_suspension = new Filter_Suspension( array(
+			array( 'title_save_pre', 'wp_filter_kses' ),
+			array( 'content_save_pre', 'wp_filter_kses' ),
+		) );
+
+		$filter_suspension->start();
 		$r = wp_insert_post( $postarr, true );
+		$filter_suspension->stop();
 
 		if ( is_wp_error( $r ) ) {
 			throw new Exception( $r->get_error_message() );
