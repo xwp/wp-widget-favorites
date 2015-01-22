@@ -27,11 +27,11 @@ class Ajax_API {
 			if ( ! current_user_can( $this->plugin->config['capability'] ) ) {
 				throw new Public_Exception( 'unauthorized', 403 );
 			}
-			if ( empty( $_REQUEST['method'] ) ) {
+			if ( empty( $_REQUEST['method'] ) ) { // wpcs: input var okay
 				throw new Public_Exception( 'bad method param', 400 );
 			}
-			$method = sanitize_key( $_REQUEST['method'] );
-			$params = wp_unslash( $_REQUEST );
+			$method = sanitize_key( $_REQUEST['method'] ); // wpcs: input var okay
+			$params = wp_unslash( $_REQUEST ); // wpcs: input var okay
 
 			$result = null;
 			$params['check_capabilities'] = true;
