@@ -285,7 +285,12 @@ class Plugin {
 
 		$sanitized_widget_setting = array();
 		if ( $post->post_content ) {
-			$sanitized_widget_setting = unserialize( $post->post_content );
+			$serialized = $post->post_content;
+			$is_base64_encoded = ( ! is_serialized( $serialized ) ); // as of 0.1.2, we base64-encode the serialized data to prevent unserialization errors
+			if ( $is_base64_encoded ) {
+				$serialized = base64_decode( $serialized );
+			}
+			$sanitized_widget_setting = unserialize( $serialized );
 		}
 		$sanitized_widget_setting = $this->get_customize_manager()->widgets->sanitize_widget_js_instance( $sanitized_widget_setting );
 

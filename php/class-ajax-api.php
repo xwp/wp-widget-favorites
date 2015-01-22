@@ -296,7 +296,7 @@ class Ajax_API {
 			'post_type' => Plugin::POST_TYPE,
 			'post_status' => 'publish',
 			'post_title' => isset( $params['name'] ) ? $params['name'] : null,
-			'post_content' => serialize( $params['sanitized_widget_setting'] ), // @todo unfiltered_html problem?
+			'post_content' => base64_encode( serialize( $params['sanitized_widget_setting'] ) ), // using base64_encode to prevent de-serialization errors
 		);
 
 		$r = wp_insert_post( $postarr, true );
