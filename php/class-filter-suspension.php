@@ -30,6 +30,7 @@ class Filter_Suspension {
 			if ( ! is_callable( $callback, true ) ) {
 				throw new Exception( 'Illegal callback for filter' );
 			}
+			// @todo defer the has_filter() check until actually starting
 			$priority = has_filter( $hook, $callback );
 			if ( false !== $priority ) {
 				$this->suspended_filters[] = compact( 'hook', 'callback', 'priority' );
@@ -44,6 +45,7 @@ class Filter_Suspension {
 		foreach ( $this->suspended_filters as $suspended_filter ) {
 			remove_filter( $suspended_filter['hook'], $suspended_filter['callback'], $suspended_filter['priority'] );
 		}
+		// @todo return the number that were suspended
 	}
 
 	/**
@@ -53,6 +55,9 @@ class Filter_Suspension {
 		foreach ( $this->suspended_filters as $suspended_filter ) {
 			add_filter( $suspended_filter['hook'], $suspended_filter['callback'], $suspended_filter['priority'], PHP_INT_MAX );
 		}
+		// @todo return the number that were restored
 	}
+
+	// @todo add function for wrapping a function call with start/stop
 
 }
