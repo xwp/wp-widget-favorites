@@ -48,6 +48,7 @@ class ClassFilterSuspensionTest extends \WP_UnitTestCase {
 	}
 
 	function test_run() {
+		$test = $this; // for PHP 5.3 closures
 
 		add_filter( 'foo', 'strtoupper' );
 		$foo_value = 'value1';
@@ -57,8 +58,8 @@ class ClassFilterSuspensionTest extends \WP_UnitTestCase {
 		) );
 		$this->assertEquals( strtoupper( $foo_value ), apply_filters( 'foo', $foo_value ) );
 
-		$retval = $instance->run( function () use ( $foo_value ) {
-			$this->assertEquals( $foo_value, apply_filters( 'foo', $foo_value ) );
+		$retval = $instance->run( function () use ( $foo_value, $test ) {
+			$test->assertEquals( $foo_value, apply_filters( 'foo', $foo_value ) );
 			return 'bard';
 		} );
 		$this->assertEquals( 'bard', $retval );
