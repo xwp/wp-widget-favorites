@@ -10,6 +10,8 @@ Store revisions of widget instances for re-use.
 **Stable tag:** trunk (master)  
 **License:** [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)  
 
+[![Build Status](https://travis-ci.org/xwp/wp-widget-favorites.png?branch=master)](https://travis-ci.org/xwp/wp-widget-favorites) 
+
 ## Description ##
 
 Sometimes you have a certain widget configuration that you need to use over-and-over again.
