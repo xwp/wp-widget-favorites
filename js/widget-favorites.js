@@ -165,7 +165,7 @@ var widgetFavorites = (function ( $ ) {
 		initialize: function ( options ) {
 			var view = this;
 			view.control = options.control;
-			this.spinnerCount = 0;
+			this.disabledInterfaceLevel = 0;
 
 			view.collection.on( 'change add remove', function () {
 				view.populateSelect();
@@ -189,11 +189,13 @@ var widgetFavorites = (function ( $ ) {
 			});
 			this.$el.empty().append( contents );
 
-			if ( view.collection.syncedTime ) { // @todo re-fetch if stale?
-				view.populateSelect();
-			} else {
+			view.populateSelect();
+
+			if ( ! view.collection.syncedTime ) { // @todo re-fetch if stale?
+				view.disableInterface();
 				view.collection.fetch().done( function () {
 					view.populateSelect();
+					view.enableInterface();
 				} );
 			}
 
@@ -237,21 +239,25 @@ var widgetFavorites = (function ( $ ) {
 		 * Make the spinner visible, and increment a count so multiple requests
 		 * can be concurrent.
 		 */
-		showSpinner: function () {
-			this.spinnerCount += 1;
-			this.$( '.spinner' ).addClass( 'visible' );
+		disableInterface: function () {
+			this.disabledInterfaceLevel += 1;
+			if ( 1 === this.disabledInterfaceLevel ) {
+				this.$( '.spinner' ).addClass( 'visible' );
+				this.$( ':input' ).prop( 'disabled', true );
+			}
 		},
 
 		/**
 		 * Hide the spinner when there are no pending spinners open.
 		 */
-		hideSpinner: function () {
-			this.spinnerCount -= 1;
-			if ( this.spinnerCount < 0 ) {
-				this.spinnerCount = 0;
+		enableInterface: function () {
+			this.disabledInterfaceLevel -= 1;
+			if ( this.disabledInterfaceLevel < 0 ) {
+				this.disabledInterfaceLevel = 0;
 			}
-			if ( 0 === this.spinnerCount ) {
+			if ( 0 === this.disabledInterfaceLevel ) {
 				this.$( '.spinner' ).removeClass( 'visible' );
+				this.$( ':input' ).prop( 'disabled', false );
 			}
 		},
 
@@ -260,7 +266,7 @@ var widgetFavorites = (function ( $ ) {
 		 */
 		changeSelect: function () {
 			var select = this.$( 'select' );
-			this.$( '.widget-favorites-load' ).prop( 'disabled', ! select.val() );
+			this.$( '.widget-favorites-load' ).toggle( !! select.val() );
 		},
 
 		/**
@@ -297,7 +303,7 @@ var widgetFavorites = (function ( $ ) {
 				src_widget_id: view.control.customizeControl.params.widget_id,
 				sanitized_widget_setting: view.control.customizeControl.setting()
 			};
-			view.showSpinner();
+			view.disableInterface();
 			if ( isNew ) {
 				model = new self.WidgetInstance( attrs );
 			} else {
@@ -315,10 +321,10 @@ var widgetFavorites = (function ( $ ) {
 					view.collection.add( model );
 					select.val( model.get( 'post_id' ) ).trigger( 'change' );
 				}
-				view.hideSpinner();
+				view.enableInterface();
 			});
 			model.once( 'error', function () {
-				view.hideSpinner();
+				view.enableInterface();
 			});
 		}
 	});
