@@ -9,55 +9,84 @@ namespace WidgetFavorites;
 class Filter_Suspension {
 
 	/**
+	 * @var array[array]
+	 */
+	protected $filters = array();
+
+	/**
 	 * @var array[array(
 	 *     @var string $hook
 	 *     @var string $callback
 	 *     @var string $priority
 	 * )]
 	 */
-	public $suspended_filters = array();
+	protected $suspended_filters = array();
 
 	/**
 	 * @param array[array] $filter_hook_callback_pairs
 	 * @throws Exception
 	 */
 	function __construct( $filter_hook_callback_pairs ) {
-		foreach ( $filter_hook_callback_pairs as $pair ) {
+		$this->filters = $filter_hook_callback_pairs;
+
+		foreach ( $this->filters as $pair ) {
 			if ( ! is_array( $pair ) || 2 !== count( $pair ) ) {
 				throw new Exception( 'Expected array of 2-element arrays to be passed into Filter_Suspension constructor' );
 			}
-			list( $hook, $callback ) = $pair;
-			if ( ! is_callable( $callback, true ) ) {
+			if ( ! is_callable( $pair[1], true ) ) {
 				throw new Exception( 'Illegal callback for filter' );
-			}
-			// @todo defer the has_filter() check until actually starting
-			$priority = has_filter( $hook, $callback );
-			if ( false !== $priority ) {
-				$this->suspended_filters[] = compact( 'hook', 'callback', 'priority' );
 			}
 		}
 	}
 
 	/**
 	 * Start suspending filters
+	 *
+	 * @return int Number of filters removed.
 	 */
 	function start() {
-		foreach ( $this->suspended_filters as $suspended_filter ) {
-			remove_filter( $suspended_filter['hook'], $suspended_filter['callback'], $suspended_filter['priority'] );
+		$filters_removed = 0;
+
+		foreach ( $this->filters as $pair ) {
+			list( $hook, $callback ) = $pair;
+			$priority = has_filter( $hook, $callback );
+			if ( false !== $priority ) {
+				remove_filter( $hook, $callback, $priority );
+				$this->suspended_filters[] = compact( 'hook', 'callback', 'priority' );
+				$filters_removed += 1;
+			}
 		}
-		// @todo return the number that were suspended
+
+		return $filters_removed;
 	}
 
 	/**
 	 * Stop suspending filters
+	 *
+	 * @return int Number of filters added.
 	 */
 	function stop() {
-		foreach ( $this->suspended_filters as $suspended_filter ) {
-			add_filter( $suspended_filter['hook'], $suspended_filter['callback'], $suspended_filter['priority'], PHP_INT_MAX );
+		$filters_restored = 0;
+		while ( count( $this->suspended_filters ) > 0 ) {
+			$filter = array_pop( $this->suspended_filters );
+			$filters_restored += 1;
+			add_filter( $filter['hook'], $filter['callback'], $filter['priority'], PHP_INT_MAX );
 		}
-		// @todo return the number that were restored
+		return $filters_restored;
 	}
 
-	// @todo add function for wrapping a function call with start/stop
+	/**
+	 * Run the supplied function with the filters disabled.
+	 *
+	 * @param callable $callback
+	 *
+	 * @return mixed return value of the callback
+	 */
+	function run( $callback ) {
+		$this->start();
+		$retval = call_user_func( $callback );
+		$this->stop();
+		return $retval;
+	}
 
 }
