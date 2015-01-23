@@ -360,6 +360,9 @@ class Plugin {
 
 		// Make sure that we can reliably get the relative path inside of the content directory
 		$content_dir = trailingslashit( WP_CONTENT_DIR );
+		if ( '/' !== \DIRECTORY_SEPARATOR ) {
+			$content_dir = str_replace( \DIRECTORY_SEPARATOR, '/', $content_dir ); // Windows compat
+		}
 		if ( 0 !== strpos( $plugin_dir, $content_dir ) ) {
 			throw new \Exception( 'Plugin dir is not inside of WP_CONTENT_DIR' );
 		}
