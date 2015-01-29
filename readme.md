@@ -39,4 +39,8 @@ Initial release
 ### 0.1.1 ###
 Fix conflict with Make theme. [#5](https://github.com/xwp/wp-widget-favorites/issues/5)
 
+### 0.1.2 ###
+* Fix WAMP issue wrt backslash `DIRECTORY_SEPARATOR` [PR #12](https://github.com/xwp/wp-widget-favorites/pull/12)
+* Fix sanitize & unserialize failures ([PR #13](https://github.com/xwp/wp-widget-favorites/pull/13))
+
 

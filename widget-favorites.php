@@ -3,7 +3,7 @@
  * Plugin Name: Widget Favorites
  * Plugin URI: https://github.com/xwp/wp-widget-favorites
  * Description: Store revisions of widget instances for re-use.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author:  XWP
  * Author URI: https://xwp.co/
  * License: GPLv2+
