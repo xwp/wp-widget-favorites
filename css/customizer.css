@@ -49,3 +49,8 @@
 	margin: 0;
 	padding: 0;
 }
+.widget-favorites-error {
+	display: none;
+	color: #F00;
+	margin-bottom: 0.5em
+}

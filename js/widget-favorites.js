@@ -177,6 +177,7 @@ var widgetFavorites = (function ( $ ) {
 		 */
 		render: function () {
 			var view = this,
+				req,
 				contents;
 
 			if ( ! view.$el.is( ':empty' ) ) {
@@ -190,13 +191,19 @@ var widgetFavorites = (function ( $ ) {
 			this.$el.empty().append( contents );
 
 			view.populateSelect();
-
 			if ( ! view.collection.syncedTime ) { // @todo re-fetch if stale?
 				view.disableInterface();
-				view.collection.fetch().done( function () {
-					view.populateSelect();
-					view.enableInterface();
+				req = view.collection.fetch();
+				req.fail( function ( jqxhr ) {
+					view.setError( view.getErrorMessage( jqxhr ) );
 				} );
+				req.done( function () {
+					view.populateSelect();
+					view.setError( null );
+				} );
+				req.always(function () {
+					view.enableInterface();
+				});
 			}
 
 		},
@@ -224,7 +231,7 @@ var widgetFavorites = (function ( $ ) {
 					title = title.replace( '%2$s', model.get( 'datetime_created' ) );
 					title = title.replace( '%3$s', model.get( 'datetime_modified' ) );
 					option.title = title;
-					select.append( option ); // @todo add datetime, author, fallback if no name
+					select.append( option );
 				} );
 
 				// Restore selected value
@@ -233,6 +240,42 @@ var widgetFavorites = (function ( $ ) {
 				}
 			}
 			select.trigger( 'change' );
+		},
+
+		/**
+		 * Display an error message or clear it from the display.
+		 *
+		 * @param {string|null} [message]
+		 */
+		setError: function ( message ) {
+			var view = this,
+				errorContainer = view.$el.find( '.widget-favorites-error' ),
+				errorMessageEl = errorContainer.find( '.widget-favorites-error-message' );
+			if ( ! message ) {
+				errorContainer.slideUp( function () {
+					errorMessageEl.text( '' );
+				} );
+			} else {
+				errorContainer.stop();
+				errorMessageEl.text( message );
+				errorContainer.slideDown();
+			}
+		},
+
+		/**
+		 * Get the error message from the WP Ajax jqxhr.
+		 *
+		 * @param jqxhr
+		 * @return string
+		 */
+		getErrorMessage: function ( jqxhr ) {
+			var errorMessage;
+			if ( jqxhr.responseJSON && false === jqxhr.responseJSON.success && typeof jqxhr.responseJSON.data === 'string' ) {
+				errorMessage = jqxhr.responseJSON.data;
+			} else {
+				errorMessage = jqxhr.statusText;
+			}
+			return errorMessage;
 		},
 
 		/**
@@ -292,7 +335,7 @@ var widgetFavorites = (function ( $ ) {
 		 * the currently-selected instance.
 		 */
 		save: function () {
-			var isNew, select, model, post_id, attrs, view = this;
+			var isNew, select, model, post_id, attrs, xhr, validationError, view = this;
 
 			select = view.$( '.widget-favorites-select' );
 			post_id = +select.val();
@@ -305,25 +348,30 @@ var widgetFavorites = (function ( $ ) {
 			};
 			view.disableInterface();
 			if ( isNew ) {
-				model = new self.WidgetInstance( attrs );
+				model = new self.WidgetInstance();
 			} else {
-				model = view.collection.get( +post_id ).set( attrs );
+				model = view.collection.get( +post_id ).set();
 			}
 
-			if ( ! model.save() ) {
-				// @todo inline errors
+			view.setError( null );
+
+			validationError = model.validate( attrs );
+			if ( validationError ) {
+				view.setError( validationError );
 				return;
 			}
 
-			model.once( 'sync', function () {
+			xhr = model.save( attrs, { wait: true } );
+			xhr.done(function () {
 				if ( isNew ) {
-					view.collection.add( model );
 					view.collection.add( model );
 					select.val( model.get( 'post_id' ) ).trigger( 'change' );
 				}
-				view.enableInterface();
 			});
-			model.once( 'error', function () {
+			xhr.fail(function ( jqxhr ) {
+				view.setError( view.getErrorMessage( jqxhr ) );
+			});
+			xhr.always(function () {
 				view.enableInterface();
 			});
 		}

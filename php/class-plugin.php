@@ -164,6 +164,7 @@ class Plugin {
 				'create_new_option_label' => __( '--', 'widget-favorites' ),
 				'untitled' => __( '(Untitled)', 'widget-favorites' ),
 				'tooltip_widget_instance_option' => __( 'Created by %1$s at %2$s. Last modified %3$s.', 'widget-favorites' ),
+				'error_label' => __( 'Error:', 'widget-favorites' ),
 			),
 			'nonce' => wp_create_nonce( 'widget_favorites' ),
 			'ajaxAction' => Ajax_API::AJAX_ACTION,
@@ -202,6 +203,10 @@ class Plugin {
 				<div class="widget-favorites-control-row">
 					<input type="text" class="widget-favorites-save-name">
 					<button type="button" class="button-secondary widget-favorites-save" title="{{ data.l10n.tooltip_save_btn }}"><span class="dashicons dashicons-upload"></span></button>
+				</div>
+				<div class="widget-favorites-error">
+					<b>{{ data.l10n.error_label }}</b>
+					<span class="widget-favorites-error-message"></span>
 				</div>
 			</div>
 		</script>
