@@ -27,11 +27,11 @@ class Ajax_API {
 			if ( ! current_user_can( $this->plugin->config['capability'] ) ) {
 				throw new Public_Exception( 'unauthorized', 403 );
 			}
-			if ( empty( $_REQUEST['method'] ) ) {
+			if ( empty( $_REQUEST['method'] ) ) { // wpcs: input var okay
 				throw new Public_Exception( 'bad method param', 400 );
 			}
-			$method = sanitize_key( $_REQUEST['method'] );
-			$params = wp_unslash( $_REQUEST );
+			$method = sanitize_key( $_REQUEST['method'] ); // wpcs: input var okay
+			$params = wp_unslash( $_REQUEST ); // wpcs: input var okay
 
 			$result = null;
 			$params['check_capabilities'] = true;
@@ -296,10 +296,18 @@ class Ajax_API {
 			'post_type' => Plugin::POST_TYPE,
 			'post_status' => 'publish',
 			'post_title' => isset( $params['name'] ) ? $params['name'] : null,
-			'post_content' => serialize( $params['sanitized_widget_setting'] ), // @todo unfiltered_html problem?
+			'post_content' => base64_encode( serialize( $params['sanitized_widget_setting'] ) ), // using base64_encode to prevent de-serialization errors
 		);
 
+		// Prevent special characters from becoming HTML entities. The VIP Co-Schedule plugin removes this filter.
+		$filter_suspension = new Filter_Suspension( array(
+			array( 'title_save_pre', 'wp_filter_kses' ),
+			array( 'content_save_pre', 'wp_filter_kses' ),
+		) );
+
+		$filter_suspension->start();
 		$r = wp_insert_post( $postarr, true );
+		$filter_suspension->stop();
 
 		if ( is_wp_error( $r ) ) {
 			throw new Exception( $r->get_error_message() );

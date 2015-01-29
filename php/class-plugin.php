@@ -243,7 +243,12 @@ class Plugin {
 
 		$sanitized_widget_setting = array();
 		if ( $post->post_content ) {
-			$sanitized_widget_setting = unserialize( $post->post_content );
+			$serialized = $post->post_content;
+			$is_base64_encoded = ( ! is_serialized( $serialized ) ); // as of 0.1.2, we base64-encode the serialized data to prevent unserialization errors
+			if ( $is_base64_encoded ) {
+				$serialized = base64_decode( $serialized );
+			}
+			$sanitized_widget_setting = unserialize( $serialized );
 		}
 		$sanitized_widget_setting = $this->get_customize_manager()->widgets->sanitize_widget_js_instance( $sanitized_widget_setting );
 
@@ -308,6 +313,9 @@ class Plugin {
 	public function locate_plugin() {
 		$reflection = new \ReflectionObject( $this );
 		$file_name = $reflection->getFileName();
+		if ( '/' !== \DIRECTORY_SEPARATOR ) {
+			$file_name = str_replace( \DIRECTORY_SEPARATOR, '/', $file_name ); // Windows compat
+		}
 		$plugin_dir = preg_replace( '#(.*plugins[^/]*/[^/]+)(/.*)?#', '$1', $file_name, 1, $count );
 		if ( 0 === $count ) {
 			throw new \Exception( "Class not located within a directory tree containing 'plugins': $file_name" );
@@ -315,6 +323,9 @@ class Plugin {
 
 		// Make sure that we can reliably get the relative path inside of the content directory
 		$content_dir = trailingslashit( WP_CONTENT_DIR );
+		if ( '/' !== \DIRECTORY_SEPARATOR ) {
+			$content_dir = str_replace( \DIRECTORY_SEPARATOR, '/', $content_dir ); // Windows compat
+		}
 		if ( 0 !== strpos( $plugin_dir, $content_dir ) ) {
 			throw new \Exception( 'Plugin dir is not inside of WP_CONTENT_DIR' );
 		}
