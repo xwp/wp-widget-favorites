@@ -127,6 +127,11 @@ class Plugin {
 		}
 
 		$handle = 'widget-favorites';
+		$src = $this->dir_url . 'css/customizer.css';
+		$deps = array();
+		wp_enqueue_style( $handle, $src, $deps );
+
+		$handle = 'widget-favorites';
 		$src = $this->dir_url . 'js/widget-favorites.js';
 		$deps = array( 'jquery', 'backbone', 'customize-controls', 'wp-util' );
 		wp_enqueue_script( $handle, $src, $deps );
@@ -181,58 +186,6 @@ class Plugin {
 		$this->printed_templates = true;
 
 		?>
-		<style>
-		.widget-favorites-ui {
-			margin-top: 8px;
-			background: #F9F9F9;
-			border: 1px solid #DFDFDF;
-			padding: 12px 10px;
-			position: relative;
-		}
-		.widget-favorites-ui .spinner {
-			position: absolute;
-			top: 10px;
-			right: 5px;
-			display: none !important; /* needed due to customize-widgets.js */
-		}
-		.widget-favorites-ui .spinner.visible {
-			display: inline-block !important;
-		}
-
-		.widget-favorites-ui > h4 {
-			display: block;
-			font-size: 14px;
-			line-height: 24px;
-			font-weight: 600;
-			margin-top: 0;
-			margin-bottom: 5px;
-		}
-		.widget-favorites-control-row {
-			display: -webkit-flex;
-			display: -ms-flexbox;
-			display: -webkit-flex;
-			display: flex;
-			-webkit-box-direction: normal;
-			-webkit-box-orient: horizontal;
-			-ms-flex-direction: row;
-			-webkit-flex-direction: row;
-			flex-direction: row;
-
-			flex-wrap: nowrap;
-		}
-		.widget-favorites-control-row .dashicons {
-			vertical-align: middle;
-		}
-		.widget-favorites-control-row > input,
-		.widget-favorites-control-row > select {
-			flex: 10 0;
-		}
-		.widget-favorites-control-row > .button-secondary {
-			flex: 1 0 20px;
-			margin: 0;
-			padding: 0;
-		}
-		</style>
 
 		<script type="text/html" id="tmpl-widget-favorites-star">
 			| <a class="widget-favorites-star" href="javascript:" title="{{ data.l10n.tooltip_show_favorites }}">&#x2605;</a>
