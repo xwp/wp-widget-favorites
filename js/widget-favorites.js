@@ -164,7 +164,7 @@ var widgetFavorites = (function ( $ ) {
 
 		initialize: function ( options ) {
 			var view = this;
-			view.control = options.control;
+			view.control = options.control; // @todo rename as controller
 			this.disabledInterfaceLevel = 0;
 
 			view.collection.on( 'change add remove', function () {
@@ -327,7 +327,13 @@ var widgetFavorites = (function ( $ ) {
 			if ( ! model ) {
 				return;
 			}
-			view.control.customizeControl.setting( model.get( 'sanitized_widget_setting' ) );
+			view.disableInterface();
+			view.control.customizeControl.updateWidget({
+				instance: model.get( 'sanitized_widget_setting' ),
+				complete: function () {
+					view.enableInterface();
+				}
+			});
 		},
 
 		/**
