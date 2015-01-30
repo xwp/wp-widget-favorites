@@ -164,8 +164,8 @@ var widgetFavorites = (function ( $ ) {
 
 		initialize: function ( options ) {
 			var view = this;
-			view.control = options.control;
-			this.spinnerCount = 0;
+			view.control = options.control; // @todo rename as controller
+			this.disabledInterfaceLevel = 0;
 
 			view.collection.on( 'change add remove', function () {
 				view.populateSelect();
@@ -177,6 +177,7 @@ var widgetFavorites = (function ( $ ) {
 		 */
 		render: function () {
 			var view = this,
+				req,
 				contents;
 
 			if ( ! view.$el.is( ':empty' ) ) {
@@ -189,12 +190,20 @@ var widgetFavorites = (function ( $ ) {
 			});
 			this.$el.empty().append( contents );
 
-			if ( view.collection.syncedTime ) { // @todo re-fetch if stale?
-				view.populateSelect();
-			} else {
-				view.collection.fetch().done( function () {
-					view.populateSelect();
+			view.populateSelect();
+			if ( ! view.collection.syncedTime ) { // @todo re-fetch if stale?
+				view.disableInterface();
+				req = view.collection.fetch();
+				req.fail( function ( jqxhr ) {
+					view.setError( view.getErrorMessage( jqxhr ) );
 				} );
+				req.done( function () {
+					view.populateSelect();
+					view.setError( null );
+				} );
+				req.always(function () {
+					view.enableInterface();
+				});
 			}
 
 		},
@@ -222,7 +231,7 @@ var widgetFavorites = (function ( $ ) {
 					title = title.replace( '%2$s', model.get( 'datetime_created' ) );
 					title = title.replace( '%3$s', model.get( 'datetime_modified' ) );
 					option.title = title;
-					select.append( option ); // @todo add datetime, author, fallback if no name
+					select.append( option );
 				} );
 
 				// Restore selected value
@@ -234,24 +243,64 @@ var widgetFavorites = (function ( $ ) {
 		},
 
 		/**
+		 * Display an error message or clear it from the display.
+		 *
+		 * @param {string|null} [message]
+		 */
+		setError: function ( message ) {
+			var view = this,
+				errorContainer = view.$el.find( '.widget-favorites-error' ),
+				errorMessageEl = errorContainer.find( '.widget-favorites-error-message' );
+			if ( ! message ) {
+				errorContainer.slideUp( function () {
+					errorMessageEl.text( '' );
+				} );
+			} else {
+				errorContainer.stop();
+				errorMessageEl.text( message );
+				errorContainer.slideDown();
+			}
+		},
+
+		/**
+		 * Get the error message from the WP Ajax jqxhr.
+		 *
+		 * @param jqxhr
+		 * @return string
+		 */
+		getErrorMessage: function ( jqxhr ) {
+			var errorMessage;
+			if ( jqxhr.responseJSON && false === jqxhr.responseJSON.success && typeof jqxhr.responseJSON.data === 'string' ) {
+				errorMessage = jqxhr.responseJSON.data;
+			} else {
+				errorMessage = jqxhr.statusText;
+			}
+			return errorMessage;
+		},
+
+		/**
 		 * Make the spinner visible, and increment a count so multiple requests
 		 * can be concurrent.
 		 */
-		showSpinner: function () {
-			this.spinnerCount += 1;
-			this.$( '.spinner' ).addClass( 'visible' );
+		disableInterface: function () {
+			this.disabledInterfaceLevel += 1;
+			if ( 1 === this.disabledInterfaceLevel ) {
+				this.$( '.spinner' ).addClass( 'visible' );
+				this.$( ':input' ).prop( 'disabled', true );
+			}
 		},
 
 		/**
 		 * Hide the spinner when there are no pending spinners open.
 		 */
-		hideSpinner: function () {
-			this.spinnerCount -= 1;
-			if ( this.spinnerCount < 0 ) {
-				this.spinnerCount = 0;
+		enableInterface: function () {
+			this.disabledInterfaceLevel -= 1;
+			if ( this.disabledInterfaceLevel < 0 ) {
+				this.disabledInterfaceLevel = 0;
 			}
-			if ( 0 === this.spinnerCount ) {
+			if ( 0 === this.disabledInterfaceLevel ) {
 				this.$( '.spinner' ).removeClass( 'visible' );
+				this.$( ':input' ).prop( 'disabled', false );
 			}
 		},
 
@@ -260,7 +309,7 @@ var widgetFavorites = (function ( $ ) {
 		 */
 		changeSelect: function () {
 			var select = this.$( 'select' );
-			this.$( '.widget-favorites-load' ).prop( 'disabled', ! select.val() );
+			this.$( '.widget-favorites-load' ).toggle( !! select.val() );
 		},
 
 		/**
@@ -278,7 +327,13 @@ var widgetFavorites = (function ( $ ) {
 			if ( ! model ) {
 				return;
 			}
-			view.control.customizeControl.setting( model.get( 'sanitized_widget_setting' ) );
+			view.disableInterface();
+			view.control.customizeControl.updateWidget({
+				instance: model.get( 'sanitized_widget_setting' ),
+				complete: function () {
+					view.enableInterface();
+				}
+			});
 		},
 
 		/**
@@ -286,7 +341,7 @@ var widgetFavorites = (function ( $ ) {
 		 * the currently-selected instance.
 		 */
 		save: function () {
-			var isNew, select, model, post_id, attrs, view = this;
+			var isNew, select, model, post_id, attrs, xhr, validationError, view = this;
 
 			select = view.$( '.widget-favorites-select' );
 			post_id = +select.val();
@@ -297,28 +352,33 @@ var widgetFavorites = (function ( $ ) {
 				src_widget_id: view.control.customizeControl.params.widget_id,
 				sanitized_widget_setting: view.control.customizeControl.setting()
 			};
-			view.showSpinner();
+			view.disableInterface();
 			if ( isNew ) {
-				model = new self.WidgetInstance( attrs );
+				model = new self.WidgetInstance();
 			} else {
-				model = view.collection.get( +post_id ).set( attrs );
+				model = view.collection.get( +post_id ).set();
 			}
 
-			if ( ! model.save() ) {
-				// @todo inline errors
+			view.setError( null );
+
+			validationError = model.validate( attrs );
+			if ( validationError ) {
+				view.setError( validationError );
 				return;
 			}
 
-			model.once( 'sync', function () {
+			xhr = model.save( attrs, { wait: true } );
+			xhr.done(function () {
 				if ( isNew ) {
-					view.collection.add( model );
 					view.collection.add( model );
 					select.val( model.get( 'post_id' ) ).trigger( 'change' );
 				}
-				view.hideSpinner();
 			});
-			model.once( 'error', function () {
-				view.hideSpinner();
+			xhr.fail(function ( jqxhr ) {
+				view.setError( view.getErrorMessage( jqxhr ) );
+			});
+			xhr.always(function () {
+				view.enableInterface();
 			});
 		}
 	});
