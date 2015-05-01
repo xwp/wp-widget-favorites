@@ -1,5 +1,5 @@
 === Widget Favorites ===
-Contributors: xwp, westonruter
+Contributors: xwp, westonruter, newscorpau
 Tags: widgets, customizer, revisions
 Requires at least: 4.1
 Tested up to: 4.1

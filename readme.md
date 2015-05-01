@@ -3,7 +3,7 @@
 
 Store revisions of widget instances for re-use.
 
-**Contributors:** [xwp](https://profiles.wordpress.org/xwp), [westonruter](https://profiles.wordpress.org/westonruter)  
+**Contributors:** [xwp](https://profiles.wordpress.org/xwp), [westonruter](https://profiles.wordpress.org/westonruter), [newscorpau](https://profiles.wordpress.org/newscorpau)  
 **Tags:** [widgets](https://wordpress.org/plugins/tags/widgets), [customizer](https://wordpress.org/plugins/tags/customizer), [revisions](https://wordpress.org/plugins/tags/revisions)  
 **Requires at least:** 4.1  
 **Tested up to:** 4.1  
