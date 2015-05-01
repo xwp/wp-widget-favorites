@@ -1,5 +1,5 @@
 === Widget Favorites ===
-Contributors: xwp, westonruter
+Contributors: xwp, westonruter, newscorpau
 Tags: widgets, customizer, revisions
 Requires at least: 4.1
 Tested up to: 4.1
@@ -39,3 +39,11 @@ Fix conflict with Make theme. [#5](https://github.com/xwp/wp-widget-favorites/is
 = 0.1.2 =
 * Fix WAMP issue wrt backslash `DIRECTORY_SEPARATOR` [PR #12](https://github.com/xwp/wp-widget-favorites/pull/12)
 * Fix sanitize & unserialize failures ([PR #13](https://github.com/xwp/wp-widget-favorites/pull/13))
+
+= 0.2 =
+Improvements from [PR #14](https://github.com/xwp/wp-widget-favorites/pull/14):
+
+* Prevent showing existing dropdown when loading
+* Disable fields while loading/saving
+* Hide load button if no widget selected
+* Display any error messages instead of failing silently.
