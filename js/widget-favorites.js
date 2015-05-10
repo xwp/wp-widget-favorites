@@ -1,4 +1,4 @@
-/* global wp, jQuery, Backbone, _widgetFavorites_exports */
+/* global wp, jQuery, Backbone, JSON, _widgetFavorites_exports */
 /* exported widgetFavorites */
 var widgetFavorites = (function ( $ ) {
 	var self;
