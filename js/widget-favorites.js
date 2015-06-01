@@ -93,6 +93,10 @@ var widgetFavorites = (function ( $ ) {
 			delete exported.datetime_created;
 			delete exported.datetime_modified;
 			return exported;
+		},
+
+		sync: function ( method, collection, options ) {
+			return self.sync( method, collection, options );
 		}
 	});
 
@@ -101,6 +105,7 @@ var widgetFavorites = (function ( $ ) {
 	 */
 	self.WidgetTypeCollection = Backbone.Collection.extend({
 		model: self.WidgetInstance,
+
 		initialize: function ( models, options ) {
 			var collection = this;
 			options = options || {};
@@ -114,8 +119,13 @@ var widgetFavorites = (function ( $ ) {
 			});
 			return Backbone.Collection.prototype.initialize.call( collection, models, options );
 		},
+
 		comparator: function( model ) {
 			return -model.get( 'datetime_created' ).getTime();
+		},
+
+		sync: function ( method, model, options ) {
+			return self.sync( method, model, options );
 		}
 	});
 
@@ -449,23 +459,7 @@ var widgetFavorites = (function ( $ ) {
 
 		$( document ).on( 'widget-added', this.onWidgetAdded );
 
-		this.overrideBackboneSync();
 		this.createCollections();
-	};
-
-	/**
-	 * Inject our WP Ajax implementation for fetching and saving instances.
-	 */
-	self.overrideBackboneSync = function () {
-		var originalBackboneSync = Backbone.sync;
-		Backbone.sync = function ( method, model, options ) {
-			if ( model instanceof self.WidgetInstance || ( model instanceof Backbone.Collection && model.model === self.WidgetInstance ) ) {
-				return self.sync( method, model, options );
-			} else {
-				// Pass-through for any other implementations on the page
-				return originalBackboneSync.call( this, method, model, options );
-			}
-		};
 	};
 
 	/**
